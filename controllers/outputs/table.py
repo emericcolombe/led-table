@@ -61,19 +61,17 @@ class Table(TableController):
         self.message.clear()
 
     def xy_to_index(self, x: int, y: int) -> int:
-        upside_down = False
-        if not upside_down:
+        if not self.upside_down:
             leds_before_column = self._pixel_nb * (self._pixel_nb - 1 - x)
             if x % 2 == 0:
                 index = leds_before_column + y
             else:
                 index = leds_before_column + self._pixel_nb - 1 - y
-
-            return index
         else:
             index = x * self._pixel_nb
             if x % 2 == 0:
                 index += y
             else:
                 index += self._pixel_nb
+
         return index

@@ -10,6 +10,7 @@ class TableController:
 
     def __init__(self, pixel_nb: int):
         self._pixel_nb = pixel_nb
+        self.upside_down = False
 
     def set_pixels(self, leds: List[Led], update=False):
         raise NotImplementedError
