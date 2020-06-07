@@ -22,7 +22,9 @@ class LedDispatcher(TableController):
         self.active_controllers = []  # type: List[TableController]
 
         if config == DispatcherConfig.TABLE or config == DispatcherConfig.TABLE_AND_SIMULATOR:
-            self.active_controllers.append(Table(pixel_nb))
+            table = Table(pixel_nb)
+            table.connect()
+            self.active_controllers.append(table)
 
         if config == DispatcherConfig.SIMULATOR or config == DispatcherConfig.TABLE_AND_SIMULATOR:
             self.active_controllers.append(TableSimulator(pixel_nb))

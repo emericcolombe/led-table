@@ -15,11 +15,15 @@ class MessageType(enum.Enum):
 class Table(TableController):
     def __init__(self, pixel_nb: int):
         super().__init__(pixel_nb)
+        self.socket = None  # type: Optional[socket]
+
+    def connect(self):
         self.socket = socket.socket(socket.AF_INET, socket.SOCK_STREAM)
 
         ip = '192.168.1.59'
         port = 5045
 
+        print("Connecting...")
         self.socket.connect((ip, port))
         print("Connected !")
 
@@ -57,9 +61,19 @@ class Table(TableController):
         pass
 
     def xy_to_index(self, x: int, y: int) -> int:
-        index = x * self._pixel_nb
-        if x % 2 == 0:
-            index += y
+        upside_down = False
+        if not upside_down:
+            leds_before_column = self._pixel_nb * (self._pixel_nb - 1 - x)
+            if x % 2 == 0:
+                index = leds_before_column + y
+            else:
+                index = leds_before_column + self._pixel_nb - 1 - y
+
+            return index
         else:
-            index += self._pixel_nb - 1 - y
+            index = x * self._pixel_nb
+            if x % 2 == 0:
+                index += y
+            else:
+                index += self._pixel_nb
         return index
