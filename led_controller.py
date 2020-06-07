@@ -8,7 +8,7 @@ if __name__ == "__main__":
     # execute only if run as a script
     table = LedDispatcher(10, DispatcherConfig.TABLE)
 
-    # app = ColorFlow(table)
+    app = ColorFlow(table)
     # app = ColorPick(table)
-    app = Snake(table)
+    # app = Snake(table)
     app.start()

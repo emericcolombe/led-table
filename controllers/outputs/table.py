@@ -16,6 +16,7 @@ class Table(TableController):
     def __init__(self, pixel_nb: int):
         super().__init__(pixel_nb)
         self.socket = None  # type: Optional[socket]
+        self.message = bytearray()
 
     def connect(self):
         self.socket = socket.socket(socket.AF_INET, socket.SOCK_STREAM)
@@ -27,23 +28,21 @@ class Table(TableController):
         self.socket.connect((ip, port))
         print("Connected !")
 
-    def set_pixel(self, x: int, y: int, color: Color, update=False):
-        pass
-
     def set_pixels(self, leds: List[Led], update=False):
-        message = bytearray()
-        message.append(MessageType.SET_SOME.value)
-        message.append(len(leds))
-        for led in leds:
-            message.append(self.xy_to_index(led.x, led.y))
-            message.append(led.color.r)
-            message.append(led.color.g)
-            message.append(led.color.b)
-            print("LED {}".format(led.color))
 
-        print(len(leds))
-        print(len(message))
-        self.socket.send(message)
+        self.message.append(MessageType.SET_SOME.value)
+        self.message.append(len(leds))
+        for led in leds:
+            self.message.append(self.xy_to_index(led.x, led.y))
+            self.message.append(led.color.r)
+            self.message.append(led.color.g)
+            self.message.append(led.color.b)
+
+        # print(len(leds))
+        # print(len(self.message))
+
+        if update:
+            self.update()
 
     def set_all(self, color: Color):
         message = bytearray()
@@ -58,7 +57,8 @@ class Table(TableController):
         self.socket.send(message)
 
     def update(self):
-        pass
+        self.socket.send(self.message)
+        self.message.clear()
 
     def xy_to_index(self, x: int, y: int) -> int:
         upside_down = False

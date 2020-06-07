@@ -22,7 +22,7 @@ class ColorFlow(LedApplication):
                 for x in range(0, self.controller.size):
                     self.controller.set_pixels([Led(x, y, Color(255, 0, 255))])
                 self.controller.update()
-
+                time.sleep(0.2)
             time.sleep(0.5)
 
     def stop(self):
