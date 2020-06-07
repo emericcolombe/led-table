@@ -3,7 +3,7 @@ from controllers.controller import TableController
 import tkinter as tk
 from tkcolorpicker import askcolor
 
-from utils.primitives import Led, Color, Position
+from utils.primitives import Led, Color
 
 
 class ColorPick(LedApplication):
@@ -16,9 +16,13 @@ class ColorPick(LedApplication):
         rgb = askcolor((255, 255, 0), self.root)[0]
         led_list = []
         for i in range(0, self.controller.size):
-            led_list.append(Led(Position(i, 0), Color(rgb[0], rgb[1], rgb[2])))
+            for j in range(0, self.controller.size):
+                led_list.append(Led(i, j, Color(rgb[0], rgb[1], rgb[2])))
 
         self.controller.set_pixels(led_list)
+
+        while True:
+            pass
 
     def stop(self):
         self.root.destroy()

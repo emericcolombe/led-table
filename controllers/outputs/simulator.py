@@ -26,6 +26,7 @@ class TableSimulator(TableController):
                               height=self._table_size,
                               background='grey')
         self._canvas.pack()
+        self._canvas.bind("<Key>", self.key)
         self._create_grid()
 
     def set_pixel(self, x: int, y: int, color: Color, update=False):
@@ -39,8 +40,8 @@ class TableSimulator(TableController):
 
     def set_pixels(self, leds: List[Led], update=False):
         for led in leds:
-            self.set_pixel(led.position.x,
-                           led.position.y,
+            self.set_pixel(led.x,
+                           led.y,
                            led.color)
         self.update()
 
@@ -56,6 +57,9 @@ class TableSimulator(TableController):
 
     def update(self):
         self._window.update()
+
+    def key(self, event):
+        print("pressed ", repr(event.char))
 
     @staticmethod
     def str_from_rgb(rgb: Color) -> str:

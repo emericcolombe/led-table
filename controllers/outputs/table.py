@@ -3,7 +3,7 @@ import socket
 from typing import List
 
 from controllers.controller import TableController
-from utils.primitives import Color, Led, Position
+from utils.primitives import Color, Led
 
 
 class MessageType(enum.Enum):
@@ -21,6 +21,7 @@ class Table(TableController):
         port = 5045
 
         self.socket.connect((ip, port))
+        print("Connected !")
 
     def set_pixel(self, x: int, y: int, color: Color, update=False):
         pass
@@ -30,12 +31,14 @@ class Table(TableController):
         message.append(MessageType.SET_SOME.value)
         message.append(len(leds))
         for led in leds:
-            message.append(self.xy_to_index(led.position))
+            message.append(self.xy_to_index(led.x, led.y))
             message.append(led.color.r)
             message.append(led.color.g)
             message.append(led.color.b)
-            # print("LED{}".format(led.index))
+            print("LED {}".format(led.color))
 
+        print(len(leds))
+        print(len(message))
         self.socket.send(message)
 
     def set_all(self, color: Color):
@@ -53,8 +56,10 @@ class Table(TableController):
     def update(self):
         pass
 
-    @staticmethod
-    def xy_to_index(position: Position) -> int:
-        # TODO: Convert xy position to led index on led band
-        print(position)
-        return 203948
+    def xy_to_index(self, x: int, y: int) -> int:
+        index = x * self._pixel_nb
+        if x % 2 == 0:
+            index += y
+        else:
+            index += self._pixel_nb - 1 - y
+        return index

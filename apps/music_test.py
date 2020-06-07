@@ -3,10 +3,9 @@ import time
 
 import numpy as np
 import sounddevice as sd
-import led_controller
 from apps.app import LedApplication
 from controllers.controller import TableController
-from utils.primitives import Led, Position, Color
+from utils.primitives import Led, Color
 
 duration = 100  # seconds
 
@@ -30,13 +29,13 @@ class MusicTest(LedApplication):
         print("{}".format(volume_norm))
 
         ledsToSwitch = []
-        for i in (0, volume_norm):
-            print("{}".format(i))
-            ledsToSwitch.append(Led(Position(int(i), 0),
-                                    Color(0, 0, 0)))
+        for i in range(0, volume_norm):
+            # print("{}".format(i))
+            ledsToSwitch.append(Led(int(i), 0,
+                                    Color(0, 0, 255)))
 
-        print(ledsToSwitch)
-        self.controller.setLed(ledsToSwitch)
+        # print(ledsToSwitch)
+        self.controller.set_pixels(ledsToSwitch)
 
         print("|" * int(volume_norm))
 
