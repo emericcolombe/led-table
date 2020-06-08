@@ -16,7 +16,7 @@ class Color:
 
 
 class Led:
-    def __init__(self, x, y, color: Color):
+    def __init__(self, x: int, y: int, color: Color):
         self._x = x
         self._y = y
         self._color = color
