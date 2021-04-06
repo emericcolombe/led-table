@@ -1,3 +1,6 @@
+#define FASTLED_ESP8266_RAW_PIN_ORDER
+#include <FastLED.h>
+
 #include <ESPAsyncTCP.h>
 #include <ESPAsyncWebServer.h>
 #include <WebSerial.h>
@@ -13,6 +16,10 @@
 
 #include "WiFiCredentials.h"
 
+#define LED_NUM 100
+#define LED_PIN 2
+CRGB leds[LED_NUM];
+
 ESP8266WiFiMulti wifiMulti;       // Create an instance of the ESP8266WiFiMulti class, called 'wifiMulti'
 
 AsyncWebServer server(80); // Create web server for serial
@@ -22,6 +29,8 @@ const char *OTAName = "ESP8266";           // A name and a password for the OTA 
 const char *OTAPassword = "esp8266";
 
 WiFiClient client;
+
+void all(int new_color);
 
 void webSocketEvent(uint8_t num, WStype_t type, uint8_t * payload, size_t lenght) { // When a WebSocket message is received
     Serial.printf("[%u] Disconnected!\n", num);
@@ -50,19 +59,21 @@ void setupWebSocket() { // Start a WebSocket server
 void setupWifi() { // Start a WebSocket server
     // Initialize serial communication
     Serial.begin(115200);
-    
-    // Initalizing band strip
-    //FastLED.addLeds<NEOPIXEL, LED_PIN>(leds, LED_NUM);
-    
+
     // Connect to wifi
     Serial.print("Trying to connect to ");
     Serial.print(ssid);
     wifiMulti.addAP(ssid, password);
 
+    all(CRGB::Red);
     while(wifiMulti.run() != WL_CONNECTED) {
         delay(500);
         Serial.print(".");
     }  
+
+    all(CRGB::Green);
+    delay(1000);
+    all(CRGB::Black);
 
     Serial.println("");
     Serial.print("Connected to ");
@@ -108,11 +119,24 @@ void setupWebSerial() {
     server.begin();
 }
 
+void setupLeds() {
+    // Initalizing band strip
+    FastLED.addLeds<NEOPIXEL, LED_PIN>(leds, LED_NUM);
+}
+
+void all(int new_color) {
+    for (int i = 0; i < LED_NUM; i++) {
+        leds[i] = new_color;
+    }
+    FastLED.show();
+}
+
 void setup() {
+    setupLeds();
     setupWifi ();
+    setupWebSerial();
     setupOTA();
     setupWebSocket();
-    setupWebSerial();
 }
 
 void loop() {
