@@ -88,12 +88,17 @@ void setupOTA() {
 
     ArduinoOTA.onStart([]() {
         Serial.println("Start");
+        all(CRGB::LightPink);
     });
     ArduinoOTA.onEnd([]() {
         Serial.println("\r\nEnd");
+        all(CRGB::Gold);
     });
     ArduinoOTA.onProgress([](unsigned int progress, unsigned int total) {
-        Serial.printf("Progress: %u%%\r", (progress / (total / 100)));
+        int percentage = progress / (total / 100);
+        WebSerial.println(percentage);
+        leds[percentage] = CRGB::Green;
+        FastLED.show();
     });
     ArduinoOTA.onError([](ota_error_t error) {
         Serial.printf("Error[%u]: ", error);
@@ -142,4 +147,13 @@ void setup() {
 void loop() {
     webSocket.loop();
     ArduinoOTA.handle();
+
+    for (int j = 0; j < 255; j++) {
+        for (int i = 0; i < LED_NUM; i++) {
+            leds[i] = CHSV(i - (j * 2), 255, 255); /* The higher the value 4 the less fade there is and vice versa */ 
+        }
+        FastLED.show();
+        ArduinoOTA.handle();
+        delay(10); /* Change this to your hearts desire, the lower the value the faster your colors move (and vice versa) */
+    }
 }
